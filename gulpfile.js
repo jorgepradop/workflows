@@ -16,6 +16,10 @@ var jsSources = [
 ];
 var sassSources = ['components/sass/style.scss'];
 
+var htmlSources = ['builds/development/*.html'];
+
+var jsonSources = ['builds/development/js/*.json'];
+
 gulp.task('coffee',function() {
   gulp.src(coffeeSources)
       .pipe(coffee({ bare: true})
@@ -40,14 +44,18 @@ gulp.task('compass', function(){
     }))
       .on('error', gutil.log)
       .pipe(gulp.dest('builds/development/css'))
+      .pipe(connect.reload())
+
 });
 
-gulp.task('default', ['coffee', 'js','compass','connect','watch']);
+gulp.task('default', ['coffee', 'json', 'js','compass','connect', 'html','watch']);
 
 gulp.task('watch', function(){
     gulp.watch(coffeeSources, ['coffee']);  
     gulp.watch(jsSources, ['js']);  
-    gulp.watch('components/sass/*.scss', ['compass']);  
+    gulp.watch('components/sass/*.scss', ['compass']);
+    gulp.watch(htmlSources, ['html']);
+    gulp.watch(jsonSources, ['json']);
 });
 
 gulp.task('connect', function() {
@@ -55,4 +63,14 @@ gulp.task('connect', function() {
       root: 'builds/development/',
       livereload: true
     });
+});
+
+gulp.task('html', function() {
+    gulp.src(htmlSources)
+    .pipe(connect.reload())
+});
+
+gulp.task('json', function() {
+    gulp.src(jsonSources)
+    .pipe(connect.reload())
 });
